@@ -49,12 +49,6 @@ set GOOGLE_API_KEY=your_api_key_here
 export GOOGLE_API_KEY="your_api_key_here"
 ```
 
-### 4. Run Setup Script (Optional)
-
-```bash
-python setup_env.py
-```
-
 ## Usage
 
 ### 1. Start the Application
