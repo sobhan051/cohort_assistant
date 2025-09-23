@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظرسنجی شغلی</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.hidden {
+            display: none;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: 'Tahoma', 'Arial', sans-serif;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="radio"] {
+            transform: scale(1.2);
+        }
+
+        .age-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .age-inputs .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .results-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .results-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .results-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Voice Recording Styles */
+        .voice-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .voice-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .record-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .record-btn:hover {
+            background: #c82333;
+        }
+
+        .record-btn.recording {
+            background: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+
+        .stop-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: #5a6268;
+        }
+
+        .play-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .play-btn:hover {
+            background: #218838;
+        }
+
+        .send-voice-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .send-voice-btn:hover {
+            background: #0056b3;
+        }
+
+        .send-voice-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .audio-preview {
+            margin: 10px 0;
+        }
+
+        .audio-preview audio {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .voice-status {
+            margin: 10px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .voice-status.recording {
+            color: #dc3545;
+        }
+
+        .voice-status.processing {
+            color: #ffc107;
+        }
+
+        .voice-status.success {
+            color: #28a745;
+        }
+
+        .voice-status.error {
+            color: #dc3545;
+        }
+
+        .voice-toggle {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .voice-toggle button {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .voice-toggle button:hover {
+            background: #138496;
+        }
+
+        .voice-mode {
+            display: none;
+        }
+
+        .voice-mode.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>نظرسنجی شغلی</h1>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Voice Mode Toggle -->
+        <div class="voice-toggle">
+            <button type="button" onclick="toggleVoiceMode()" id="voiceToggleBtn">
+                🎤 فعال کردن حالت صوتی
+            </button>
+        </div>
+
+        <form method="POST" action="{{ url_for('submit_survey') }}" id="surveyForm">
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name">نام و نام خانوادگی:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <!-- Voice Section for Name -->
+                <div class="voice-section voice-mode" id="voice-section-name">
+                    <div class="voice-controls">
+                        <button type="button" class="voice-btn record-btn" onclick="startRecording('name')">
+                            🎤 ضبط
+                        </button>
+                        <button type="button" class="voice-btn stop-btn" onclick="stopRecording('name')" disabled>
+                            ⏹️ توقف
+                        </button>
+                        <button type="button" class="voice-btn play-btn" onclick="playRecording('name')" disabled>
+                            ▶️ پخش
+                        </button>
+                        <button type="button" class="voice-btn send-voice-btn" onclick="sendVoiceAnswer('name')" disabled>
+                            📤 ارسال
+                        </button>
+                    </div>
+                    <div class="audio-preview" id="audio-preview-name"></div>
+                    <div class="voice-status" id="voice-status-name"></div>
+                </div>
+            </div>
+
+            <!-- Employment Status Question -->
+            <div class="form-group">
+                <label>۱. آیا شاغل هستید؟</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="employed_yes" name="is_employed" value="yes" onchange="toggleEmploymentQuestions()">
+                        <label for="employed_yes">بله</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="employed_no" name="is_employed" value="no" onchange="toggleEmploymentQuestions()">
+                        <label for="employed_no">خیر</label>
+                    </div>
+                </div>
+                
+                <!-- Voice Section for Employment -->
+                <div class="voice-section voice-mode" id="voice-section-employment">
+                    <div class="voice-controls">
+                        <button type="button" class="voice-btn record-btn" onclick="startRecording('employment')">
+                            🎤 ضبط
+                        </button>
+                        <button type="button" class="voice-btn stop-btn" onclick="stopRecording('employment')" disabled>
+                            ⏹️ توقف
+                        </button>
+                        <button type="button" class="voice-btn play-btn" onclick="playRecording('employment')" disabled>
+                            ▶️ پخش
+                        </button>
+                        <button type="button" class="voice-btn send-voice-btn" onclick="sendVoiceAnswer('employment')" disabled>
+                            📤 ارسال
+                        </button>
+                    </div>
+                    <div class="audio-preview" id="audio-preview-employment"></div>
+                    <div class="voice-status" id="voice-status-employment"></div>
+                </div>
+            </div>
+
+            <!-- Job Title Question (Hidden by default) -->
+            <div class="form-group hidden" id="job-question">
+                <label for="job">۲. شغل شما چیست؟</label>
+                <input type="text" id="job" name="job">
+                
+                <!-- Voice Section for Job -->
+                <div class="voice-section voice-mode" id="voice-section-job">
+                    <div class="voice-controls">
+                        <button type="button" class="voice-btn record-btn" onclick="startRecording('job')">
+                            🎤 ضبط
+                        </button>
+                        <button type="button" class="voice-btn stop-btn" onclick="stopRecording('job')" disabled>
+                            ⏹️ توقف
+                        </button>
+                        <button type="button" class="voice-btn play-btn" onclick="playRecording('job')" disabled>
+                            ▶️ پخش
+                        </button>
+                        <button type="button" class="voice-btn send-voice-btn" onclick="sendVoiceAnswer('job')" disabled>
+                            📤 ارسال
+                        </button>
+                    </div>
+                    <div class="audio-preview" id="audio-preview-job"></div>
+                    <div class="voice-status" id="voice-status-job"></div>
+                </div>
+            </div>
+
+            <!-- Age Range Question (Hidden by default) -->
+            <div class="form-group hidden" id="age-question">
+                <label>۳. از چه سنی تا چه سنی در حال انجام این کار بودید؟</label>
+                <div class="age-inputs">
+                    <div class="form-group">
+                        <label for="age_from">از سن:</label>
+                        <input type="number" id="age_from" name="age_from" min="1" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="age_to">تا سن:</label>
+                        <input type="number" id="age_to" name="age_to" min="1" max="100">
+                    </div>
+                </div>
+                
+                <!-- Voice Section for Age Range -->
+                <div class="voice-section voice-mode" id="voice-section-age">
+                    <div class="voice-controls">
+                        <button type="button" class="voice-btn record-btn" onclick="startRecording('age')">
+                            🎤 ضبط
+                        </button>
+                        <button type="button" class="voice-btn stop-btn" onclick="stopRecording('age')" disabled>
+                            ⏹️ توقف
+                        </button>
+                        <button type="button" class="voice-btn play-btn" onclick="playRecording('age')" disabled>
+                            ▶️ پخش
+                        </button>
+                        <button type="button" class="voice-btn send-voice-btn" onclick="sendVoiceAnswer('age')" disabled>
+                            📤 ارسال
+                        </button>
+                    </div>
+                    <div class="audio-preview" id="audio-preview-age"></div>
+                    <div class="voice-status" id="voice-status-age"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">ارسال پاسخ</button>
+        </form>
+
+        <div class="results-link">
+            <a href="{{ url_for('view_results') }}">مشاهده نتایج نظرسنجی</a>
+        </div>
+    </div>
+
+    <script>
+        // Voice recording variables
+        let mediaRecorder = {};
+        let recordedChunks = {};
+        let isVoiceModeActive = false;
+
+        function toggleEmploymentQuestions() {
+            const isEmployedYes = document.getElementById('employed_yes').checked;
+            const jobQuestion = document.getElementById('job-question');
+            const ageQuestion = document.getElementById('age-question');
+            const jobInput = document.getElementById('job');
+            const ageFromInput = document.getElementById('age_from');
+            const ageToInput = document.getElementById('age_to');
+
+            if (isEmployedYes) {
+                // Show employment-related questions
+                jobQuestion.classList.remove('hidden');
+                ageQuestion.classList.remove('hidden');
+                
+                // Make fields required
+                jobInput.required = true;
+                ageFromInput.required = true;
+                ageToInput.required = true;
+            } else {
+                // Hide employment-related questions
+                jobQuestion.classList.add('hidden');
+                ageQuestion.classList.add('hidden');
+                
+                // Clear values and remove required attribute
+                jobInput.value = '';
+                ageFromInput.value = '';
+                ageToInput.value = '';
+                jobInput.required = false;
+                ageFromInput.required = false;
+                ageToInput.required = false;
+            }
+        }
+
+        // Toggle voice mode
+        function toggleVoiceMode() {
+            isVoiceModeActive = !isVoiceModeActive;
+            const voiceSections = document.querySelectorAll('.voice-mode');
+            const toggleBtn = document.getElementById('voiceToggleBtn');
+            
+            if (isVoiceModeActive) {
+                voiceSections.forEach(section => section.classList.add('active'));
+                toggleBtn.innerHTML = '✖️ غیرفعال کردن حالت صوتی';
+                toggleBtn.style.background = '#dc3545';
+            } else {
+                voiceSections.forEach(section => section.classList.remove('active'));
+                toggleBtn.innerHTML = '🎤 فعال کردن حالت صوتی';
+                toggleBtn.style.background = '#17a2b8';
+            }
+        }
+
+        // Start recording
+        async function startRecording(questionId) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                mediaRecorder[questionId] = new MediaRecorder(stream);
+                recordedChunks[questionId] = [];
+                
+                mediaRecorder[questionId].ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        recordedChunks[questionId].push(event.data);
+                    }
+                };
+                
+                mediaRecorder[questionId].onstop = function() {
+                    const blob = new Blob(recordedChunks[questionId], { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(blob);
+                    
+                    // Create audio preview
+                    const audioPreview = document.getElementById(`audio-preview-${questionId}`);
+                    audioPreview.innerHTML = `<audio controls src="${audioUrl}"></audio>`;
+                    
+                    // Enable play and send buttons
+                    updateButtonStates(questionId, 'stopped');
+                    
+                    // Stop all tracks
+                    stream.getTracks().forEach(track => track.stop());
+                };
+                
+                mediaRecorder[questionId].start();
+                updateButtonStates(questionId, 'recording');
+                updateStatus(questionId, 'در حال ضبط...', 'recording');
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                updateStatus(questionId, 'خطا در دسترسی به میکروفون', 'error');
+            }
+        }
+
+        // Stop recording
+        function stopRecording(questionId) {
+            if (mediaRecorder[questionId] && mediaRecorder[questionId].state === 'recording') {
+                mediaRecorder[questionId].stop();
+                updateStatus(questionId, 'ضبط تمام شد', 'success');
+            }
+        }
+
+        // Play recording
+        function playRecording(questionId) {
+            const audio = document.querySelector(`#audio-preview-${questionId} audio`);
+            if (audio) {
+                audio.play();
+                updateStatus(questionId, 'در حال پخش...', 'success');
+            }
+        }
+
+        // Send voice answer with question data
+        async function sendVoiceAnswer(questionId) {
+            try {
+                if (!recordedChunks[questionId] || recordedChunks[questionId].length === 0) {
+                    updateStatus(questionId, 'هیچ صدایی ضبط نشده', 'error');
+                    return;
+                }
+                
+                updateStatus(questionId, 'در حال پردازش...', 'processing');
+                updateButtonStates(questionId, 'processing');
+                
+                // Get question data based on questionId
+                const questionData = getQuestionData(questionId);
+                
+                const blob = new Blob(recordedChunks[questionId], { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('audio', blob, 'recording.webm');
+                formData.append('question_text', questionData.text);
+                formData.append('question_type', questionData.type);
+                formData.append('question_options', questionData.options || '');
+                formData.append('target_fields', questionData.fields);
+                
+                const response = await fetch('/process_voice', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.answer) {
+                    // Fill form field with extracted answer
+                    fillFormFieldsGeneric(questionData.fields, result.answer);
+                    updateStatus(questionId, 'پاسخ با موفقیت استخراج شد', 'success');
+                } else {
+                    updateStatus(questionId, `خطا: ${result.error || 'نمی‌توان پاسخ را استخراج کرد'}`, 'error');
+                }
+                
+                updateButtonStates(questionId, 'stopped');
+                
+            } catch (error) {
+                console.error('Error sending voice answer:', error);
+                updateStatus(questionId, 'خطا در ارسال صدا', 'error');
+                updateButtonStates(questionId, 'stopped');
+            }
+        }
+
+        // Update button states
+        function updateButtonStates(questionId, state) {
+            const recordBtn = document.querySelector(`#voice-section-${questionId} .record-btn`);
+            const stopBtn = document.querySelector(`#voice-section-${questionId} .stop-btn`);
+            const playBtn = document.querySelector(`#voice-section-${questionId} .play-btn`);
+            const sendBtn = document.querySelector(`#voice-section-${questionId} .send-voice-btn`);
+            
+            // Reset all buttons
+            [recordBtn, stopBtn, playBtn, sendBtn].forEach(btn => {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('recording');
+                }
+            });
+            
+            switch (state) {
+                case 'recording':
+                    if (recordBtn) {
+                        recordBtn.disabled = true;
+                        recordBtn.classList.add('recording');
+                    }
+                    if (playBtn) playBtn.disabled = true;
+                    if (sendBtn) sendBtn.disabled = true;
+                    break;
+                case 'stopped':
+                    if (stopBtn) stopBtn.disabled = true;
+                    break;
+                case 'processing':
+                    [recordBtn, stopBtn, playBtn, sendBtn].forEach(btn => {
+                        if (btn) btn.disabled = true;
+                    });
+                    break;
+                default:
+                    if (stopBtn) stopBtn.disabled = true;
+                    if (playBtn) playBtn.disabled = true;
+                    if (sendBtn) sendBtn.disabled = true;
+            }
+        }
+
+        // Update status message
+        function updateStatus(questionId, message, type) {
+            const statusElement = document.getElementById(`voice-status-${questionId}`);
+            if (statusElement) {
+                statusElement.textContent = message;
+                statusElement.className = `voice-status ${type}`;
+            }
+        }
+
+        // Get question data for a given question ID
+        function getQuestionData(questionId) {
+            const questions = {
+                'name': {
+                    text: 'نام و نام خانوادگی:',
+                    type: 'text',
+                    fields: 'name'
+                },
+                'employment': {
+                    text: 'آیا شاغل هستید؟',
+                    type: 'radio',
+                    options: 'بله,خیر',
+                    fields: 'is_employed'
+                },
+                'job': {
+                    text: 'شغل شما چیست؟',
+                    type: 'text',
+                    fields: 'job'
+                },
+                'age': {
+                    text: 'از چه سنی تا چه سنی در حال انجام این کار بودید؟',
+                    type: 'number',
+                    fields: 'age_from,age_to'
+                }
+            };
+            
+            return questions[questionId] || {
+                text: 'Question not found',
+                type: 'text',
+                fields: questionId
+            };
+        }
+        
+        // Fill form fields generically based on field names
+        function fillFormFieldsGeneric(fieldsStr, answer) {
+            if (!answer || answer === 'null') {
+                return;
+            }
+            
+            const fields = fieldsStr.split(',').map(f => f.trim());
+            
+            // Handle single field
+            if (fields.length === 1) {
+                const fieldName = fields[0];
+                
+                if (fieldName === 'is_employed') {
+                    // Handle employment radio buttons
+                    if (answer === 'بله' || answer === 'yes') {
+                        document.getElementById('employed_yes').checked = true;
+                    } else if (answer === 'خیر' || answer === 'no') {
+                        document.getElementById('employed_no').checked = true;
+                    }
+                    toggleEmploymentQuestions();
+                } else {
+                    // Handle regular input fields
+                    const element = document.getElementById(fieldName);
+                    if (element) {
+                        element.value = answer;
+                    }
+                }
+            }
+            // Handle multiple fields (like age range)
+            else {
+                if (typeof answer === 'object') {
+                    for (const field of fields) {
+                        if (answer[field] && answer[field] !== 'null') {
+                            const element = document.getElementById(field);
+                            if (element) {
+                                element.value = answer[field];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Legacy function - kept for compatibility
+        function fillSingleFormField(questionId, answer) {
+            // This function is kept for backward compatibility
+            // but now uses the generic approach
+            const questionData = getQuestionData(questionId);
+            fillFormFieldsGeneric(questionData.fields, answer);
+        }
+        
+        // Fill form fields with extracted answers (legacy function for multiple answers)
+        // function fillFormFields(answers) {
+        //     if (answers.name && answers.name !== 'null') {
+        //         document.getElementById('name').value = answers.name;
+        //     }
+            
+        //     if (answers.is_employed && answers.is_employed !== 'null') {
+        //         const employmentValue = answers.is_employed;
+        //         if (employmentValue === 'yes') {
+        //             document.getElementById('employed_yes').checked = true;
+        //         } else if (employmentValue === 'no') {
+        //             document.getElementById('employed_no').checked = true;
+        //         }
+        //         toggleEmploymentQuestions();
+        //     }
+            
+        //     if (answers.job && answers.job !== 'null') {
+        //         document.getElementById('job').value = answers.job;
+        //     }
+            
+        //     if (answers.age_from && answers.age_from !== 'null') {
+        //         document.getElementById('age_from').value = answers.age_from;
+        //     }
+            
+        //     if (answers.age_to && answers.age_to !== 'null') {
+        //         document.getElementById('age_to').value = answers.age_to;
+        //     }
+        // }
+
+        // Initialize the form state
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleEmploymentQuestions();
+            
+            // Initialize button states
+            const questionIds = ['name', 'employment', 'job', 'age'];
+            questionIds.forEach(id => {
+                updateButtonStates(id, 'initial');
+            });
+        });
+    </script>
+</body>
+</html>
